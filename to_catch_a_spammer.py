@@ -78,7 +78,7 @@ Aside from the general annoyance that is spam, some of the courses that get spam
 
 Don't let spam take over Reddit! Throw it out!
 
-*Bee bop*""".format(round(trashy_users[spam_user][0]*100,2), trashy_users[spam_user][1], spam_user)
+*Beep boop*""".format(round(trashy_users[spam_user][0]*100,2), trashy_users[spam_user][1], spam_user)
 
                 try:
                     with open("posted_urls.txt","r") as f:
