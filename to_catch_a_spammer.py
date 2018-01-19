@@ -51,7 +51,7 @@ if __name__ == "__main__":
                 except: trashy_score = 0.0
                 print("User {} trashy score is: {}".format(str(author), round(trashy_score,3)))
 
-                if trashy_score >= 0.5:
+                if trashy_score >= 0.5 and sub_count > 1:
                     trashy_users[str(author)] = [trashy_score,sub_count]
 
                     for trash in user_trashy_urls:
