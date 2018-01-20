@@ -9,6 +9,7 @@ reddit = praw.Reddit(client_id=client_id,
                      client_secret=client_secret, password=password,
                      user_agent=user_agent, username=username)
 
+
 def find_spam_by_name(search_query):
     authors = []
     for submission in reddit.subreddit("all").search(search_query, sort="new", limit=11):
@@ -43,8 +44,8 @@ if __name__ == "__main__":
                                 user_trashy_urls.append([submit_id,submit_title,str(author)])
 
                     if dirty:
-                        dirty_count+=1
-                    sub_count+=1
+                        dirty_count += 1
+                    sub_count += 1
 
                 try:
                     trashy_score = dirty_count/sub_count
@@ -65,6 +66,17 @@ if __name__ == "__main__":
             spam_user = spam[2]
             submission = reddit.submission(id=spam[0])
             created_time = submission.created_utc
+            tagged = False
+
+            for comment in submission.comments.list():
+                comment_text = comment.body
+                if "*Beep boop*" in comment_text:
+                    print("This submission has already been tagged.")
+                    tagged = True
+
+            if tagged:
+                continue
+
             if time.time()-created_time <= 86400:
                 link = "https://reddit.com"+submission.permalink
 
@@ -79,7 +91,6 @@ Aside from the general annoyance that is spam, some of the courses that get spam
 Don't let spam take over Reddit! Throw it out!
 
 *Bee bop*""".format(round(trashy_users[spam_user][0]*100,2), trashy_users[spam_user][1], spam_user)
-
                 try:
                     with open("posted_urls.txt","r") as f:
                         already_posted = f.read().split('\n')
@@ -94,3 +105,4 @@ Don't let spam take over Reddit! Throw it out!
                 except Exception as e:
                     print(str(e))
                     time.sleep(12*60)
+
