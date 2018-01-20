@@ -1,0 +1,7 @@
+udemy
+course
+save
+coupon
+free
+discount
+\d+%
