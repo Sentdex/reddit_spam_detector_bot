@@ -89,8 +89,6 @@ I am a bot that sniffs out spammers, and this smells like spam.
 
 At least {}% out of the {} submissions from /u/{} appear to be for Udemy affiliate links. 
 
-Aside from the general annoyance that is spam, some of the courses that get spammed are by brand new creators on Udemy, which are actually just selling pirated content that is free for now to get views/ratings, then gets pay-walled.
-
 Don't let spam take over Reddit! Throw it out!
 
 *Bee bop*""".format(round(trashy_users[spam_user][0]*100,2), trashy_users[spam_user][1], spam_user)
