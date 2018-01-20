@@ -9,6 +9,10 @@ reddit = praw.Reddit(client_id=client_id,
                      client_secret=client_secret, password=password,
                      user_agent=user_agent, username=username)
 
+DEBUG_MODE = True  # For Debug: Don't post to reddit, only print
+debug_posted = []  # In debug mode, remember links
+
+
 def find_spam_by_name(search_query):
     authors = []
     for submission in reddit.subreddit("all").search(search_query, sort="new", limit=11):
@@ -81,6 +85,13 @@ Don't let spam take over Reddit! Throw it out!
 *Bee bop*""".format(round(trashy_users[spam_user][0]*100,2), trashy_users[spam_user][1], spam_user)
 
                 try:
+                    if DEBUG_MODE:
+                        if link in debug_posted:
+                            continue
+                        print(f"Would've posted reply to post by {spam_user}: {link}")
+                        debug_posted.append(link)
+                        continue
+
                     with open("posted_urls.txt","r") as f:
                         already_posted = f.read().split('\n')
                     if link not in already_posted:
