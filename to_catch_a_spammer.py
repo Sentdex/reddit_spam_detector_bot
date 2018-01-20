@@ -1,15 +1,16 @@
 import praw
+import re
 from praw_creds import client_id, client_secret, password, user_agent, username
 import random
 import time
 
-common_spammy_words = ['udemy','course','save','coupon','free','discount']
+common_spammy_words = []
 
 reddit = praw.Reddit(client_id=client_id,
                      client_secret=client_secret, password=password,
                      user_agent=user_agent, username=username)
 
-DEBUG_MODE = True  # For Debug: Don't post to reddit, only print
+DEBUG_MODE = False  # For Debug: Don't post to reddit, only print
 debug_posted = []  # In debug mode, remember links
 
 
@@ -21,8 +22,18 @@ def find_spam_by_name(search_query):
             authors.append(submission.author)
     return authors
 
- 
+
 if __name__ == "__main__":
+    # Compile regex from spam_words.txt for checking titles
+    with open("spam_words.txt") as f:
+        for line in f.readlines():
+            line = line.rstrip('\n')
+            try:
+                common_spammy_words.append(re.compile(line))
+            except:
+                print(f"Failed to compile {line}")
+                continue
+
     while True:
         current_search_query = random.choice(["udemy"])
         spam_content = []
@@ -39,8 +50,8 @@ if __name__ == "__main__":
                     submit_subreddit = sub.subreddit
                     submit_title = sub.title
                     dirty = False
-                    for w in common_spammy_words:
-                        if w in submit_title.lower():
+                    for regex in common_spammy_words:
+                        if re.search(regex, submit_title.lower()):
                             dirty = True
                             junk = [submit_id,submit_title]
                             if junk not in user_trashy_urls:
