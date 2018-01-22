@@ -1,13 +1,18 @@
 import praw
+import re
 from praw_creds import client_id, client_secret, password, user_agent, username
 import random
 import time
 
-common_spammy_words = ['udemy','course','save','coupon','free','discount']
+common_spammy_words = []
 
 reddit = praw.Reddit(client_id=client_id,
                      client_secret=client_secret, password=password,
                      user_agent=user_agent, username=username)
+
+
+DEBUG_MODE = False  # For Debug: Don't post to reddit, only print
+debug_posted = []  # In debug mode, remember links
 
 
 def find_spam_by_name(search_query):
@@ -18,8 +23,18 @@ def find_spam_by_name(search_query):
             authors.append(submission.author)
     return authors
 
- 
+
 if __name__ == "__main__":
+    # Compile regex from spam_words.txt for checking titles
+    with open("spam_words.txt") as f:
+        for line in f.readlines():
+            line = line.rstrip('\n')
+            try:
+                common_spammy_words.append(re.compile(line))
+            except:
+                print(f"Failed to compile {line}")
+                continue
+
     while True:
         current_search_query = random.choice(["udemy"])
         spam_content = []
@@ -36,8 +51,8 @@ if __name__ == "__main__":
                     submit_subreddit = sub.subreddit
                     submit_title = sub.title
                     dirty = False
-                    for w in common_spammy_words:
-                        if w in submit_title.lower():
+                    for regex in common_spammy_words:
+                        if re.search(regex, submit_title.lower()):
                             dirty = True
                             junk = [submit_id,submit_title]
                             if junk not in user_trashy_urls:
@@ -86,12 +101,17 @@ I am a bot that sniffs out spammers, and this smells like spam.
 
 At least {}% out of the {} submissions from /u/{} appear to be for Udemy affiliate links. 
 
-Aside from the general annoyance that is spam, some of the courses that get spammed are by brand new creators on Udemy, which are actually just selling pirated content that is free for now to get views/ratings, then gets pay-walled.
-
 Don't let spam take over Reddit! Throw it out!
 
 *Bee bop*""".format(round(trashy_users[spam_user][0]*100,2), trashy_users[spam_user][1], spam_user)
                 try:
+                    if DEBUG_MODE:
+                        if link in debug_posted:
+                            continue
+                        print(f"Would've posted reply to post by {spam_user}: {link}")
+                        debug_posted.append(link)
+                        continue
+
                     with open("posted_urls.txt","r") as f:
                         already_posted = f.read().split('\n')
                     if link not in already_posted:
