@@ -10,6 +10,7 @@ reddit = praw.Reddit(client_id=client_id,
                      client_secret=client_secret, password=password,
                      user_agent=user_agent, username=username)
 
+
 DEBUG_MODE = False  # For Debug: Don't post to reddit, only print
 debug_posted = []  # In debug mode, remember links
 
@@ -58,8 +59,8 @@ if __name__ == "__main__":
                                 user_trashy_urls.append([submit_id,submit_title,str(author)])
 
                     if dirty:
-                        dirty_count+=1
-                    sub_count+=1
+                        dirty_count += 1
+                    sub_count += 1
 
                 try:
                     trashy_score = dirty_count/sub_count
@@ -80,6 +81,17 @@ if __name__ == "__main__":
             spam_user = spam[2]
             submission = reddit.submission(id=spam[0])
             created_time = submission.created_utc
+            tagged = False
+
+            for comment in submission.comments.list():
+                comment_text = comment.body
+                if "*Beep boop*" in comment_text:
+                    print("This submission has already been tagged.")
+                    tagged = True
+
+            if tagged:
+                continue
+
             if time.time()-created_time <= 86400:
                 link = "https://reddit.com"+submission.permalink
 
@@ -92,7 +104,6 @@ At least {}% out of the {} submissions from /u/{} appear to be for Udemy affilia
 Don't let spam take over Reddit! Throw it out!
 
 *Bee bop*""".format(round(trashy_users[spam_user][0]*100,2), trashy_users[spam_user][1], spam_user)
-
                 try:
                     if DEBUG_MODE:
                         if link in debug_posted:
@@ -114,3 +125,4 @@ Don't let spam take over Reddit! Throw it out!
                 except Exception as e:
                     print(str(e))
                     time.sleep(12*60)
+
