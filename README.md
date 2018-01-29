@@ -14,4 +14,6 @@ Run with
 I am already running this on Udemy-specific spam, so you shouldn't do the same thing as I am doing. There's no need to have multiple reddit bots posting on the same threads. 
 
 # To do:
-Maybe some way of detecting is another bot has already posted on the thread, so we do not become the spammers ourselves?
+Conquer new spams!
+
+It was suggested that humblebundle would be a good next one to watch for.
