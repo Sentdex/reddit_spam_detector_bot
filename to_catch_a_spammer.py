@@ -84,8 +84,8 @@ if __name__ == "__main__":
             tagged = False
 
             for comment in submission.comments.list():
-                comment_text = comment.body
-                if "*Beep boop*" in comment_text:
+                comment_author = comment.author
+                if comment_author == reddit.user.me():
                     print("This submission has already been tagged.")
                     tagged = True
 
